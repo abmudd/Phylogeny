@@ -46,7 +46,7 @@ required.add_argument("input", help="input phylip file", type=str)
 args = parser.parse_args()
 
 
-# Open input file and set output names
+# Set input and output files
 # ============================================================
 
 in_phy = open(args.input, 'r')
@@ -112,7 +112,7 @@ for item in keep_indv:
     out_phy.write(str(item)+str(indv_seq[rec_item])+'\n')
 
 
-# Close input file
+# Close input and output files
 # ============================================================
 
 in_phy.close()
