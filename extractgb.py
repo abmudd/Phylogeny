@@ -93,11 +93,15 @@ def geneextract(temp_count, file_name, test_name, fasta_header, test_seq, start_
 # Set existing and ignore names
 # ============================================================
 
+First_line = True
 for line in open(args.gene_key, 'r'):
-    if not line.startswith('GB_name') and ';' in line:
-        line = line.upper().rstrip().split(';')
-        gene_names.append(line[0])
-        gene_dict[line[0]] = line[1]
+    if not line.startswith('GB_name'):
+        line = line.upper().rstrip()
+        if First_line:
+            initial_name = line
+            First_line = False
+        gene_names.append(line)
+        gene_dict[line] = initial_name
 
 
 # Parse input gb file
