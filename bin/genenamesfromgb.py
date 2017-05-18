@@ -84,9 +84,9 @@ def writename(test_id, test_name, outfile_name, list_name, list_name_seen):
 # ============================================================
 
 for line in open(args.gene_key, 'r'):
-    if not line.startswith('GB_name') and ';' in line:
-        line = line.upper().rstrip().split(';')
-        gene_names.append(line[0])
+    if not line.startswith('GB_name'):
+        line = line.upper().rstrip()
+        gene_names.append(line)
 
 
 # Parse input gb file

@@ -32,7 +32,10 @@
 VERSION='0.1';
 COMMAND="$0 $*";
 DATE=`date +%F`;
-EDIRECTDIR=;
+ESEARCH=`which esearch`;
+EFETCH=`which efetch`;
+SCRIPTSDIR=`dirname $0`
+WORKDIR=`pwd`
 
 
 # Error function
@@ -58,12 +61,12 @@ function usage () {
     printf "Prep script to download GenBanks records for taxonomic classification of phylogeny.\n" >&2;
     printf "\n" >&2;
     printf "Required arguments:\n" >&2;
-    printf "       --workdir STR       path for working directory\n" >&2;
-    printf "       --scripts-dir STR   path for directory with GitHub Phylogeny scripts\n" >&2;
-    printf "       --txid INT          taxonomy ID from NCBI for classification\n" >&2;
+    printf "       -txid INT           taxonomy ID from NCBI for classification\n" >&2;
     printf "\n" >&2;
     printf "Optional arguments:\n" >&2;
-    printf "       --edirect-dir STR   path for edirect directory if esearch/efetch not in PATH\n" >&2;
+    printf "       -efetch STR         path for efetch if not in PATH [efetch]\n" >&2;
+    printf "       -esearch STR        path for esearch if not in PATH [esearch]\n" >&2;
+    printf "       -workdir STR        path for working directory [pwd]\n" >&2;
     printf "\n" >&2;
 }
 
@@ -75,11 +78,11 @@ HELP_MESSAGE=;
 
 while [[ -n $@ ]]; do
     case "$1" in
-        '--workdir') shift; WORKDIR=$1;;
-        '--scripts-dir') shift; SCRIPTSDIR=$1;;
-        '--txid') shift; TXID=$1;;
-        '--edirect-dir') shift; EDIRECTDIR=$1;;
-        '--help') HELP_MESSAGE=1;;
+        '-workdir') shift; WORKDIR=$1;;
+        '-txid') shift; TXID=$1;;
+        '-efetch') shift; EFETCH=$1;;
+        '-esearch') shift; ESEARCH=$1;;
+        '-help') HELP_MESSAGE=1;;
         '-h') HELP_MESSAGE=1;;
         -*) usage; error 2 "Invalid option: ${1}";;
         *) break;;
@@ -94,9 +97,6 @@ if [[ -n "${HELP_MESSAGE}" ]]; then
 elif [[ -z "${WORKDIR}" || ! -d "${WORKDIR}" ]]; then
     usage; error 1 "WORKDIR not defined or does not exist";
 
-elif [[ -z "${SCRIPTSDIR}" || ! -d "${SCRIPTSDIR}" ]]; then
-    usage; error 1 "SCRIPTSDIR not defined or does not exist";
-
 elif [[ -z "${TXID}" ]]; then
     usage; error 1 "TXID not defined";
 
@@ -105,21 +105,12 @@ else
     printf "[%s] Command-line: $COMMAND\n" `basename $0` >&2;
     printf "[%s] Version: $VERSION\n" `basename $0` >&2;
     printf "[%s] PARAM: %s = %s\n" `basename $0` "WORKDIR"     $WORKDIR   >&2;
-    printf "[%s] PARAM: %s = %s\n" `basename $0` "SCRIPTSDIR"  $SCRIPTSDIR    >&2;
     printf "[%s] PARAM: %s = %s\n" `basename $0` "TXID"        $TXID    >&2;
 fi
 
 
 # Check that external tools are accessible
 # ============================================================
-
-if [[ -n "${EDIRECTDIR}" && -d "${EDIRECTDIR}" ]]; then
-    ESEARCH="${EDIRECTDIR}/esearch";
-    EFETCH="${EDIRECTDIR}/efetch";
-else
-    ESEARCH=`which edirect`;
-    EFETCH=`which efetch`;
-fi
 
 PYTHON=`which python`;
 ALLGENESINGB="${SCRIPTSDIR}/allgenesingb.py";
