@@ -105,4 +105,3 @@ for record in SeqIO.parse(in_gb, "gb"):
 # ============================================================
 
 in_gb.close()
-out_gene_name.close()

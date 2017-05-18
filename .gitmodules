@@ -1,0 +1,6 @@
+[submodule "submodule/AfterPhylo"]
+	path = submodule/AfterPhylo
+	url = https://github.com/qiyunzhu/AfterPhylo.git
+[submodule "submodule/BeforePhylo"]
+	path = submodule/BeforePhylo
+	url = https://github.com/qiyunzhu/BeforePhylo.git
