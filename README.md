@@ -13,38 +13,38 @@ The phylogeny pipeline allows the user to rapidly mine GenBank for a particular 
 
 ***** REQUIREMENTS *****
 
-Linux system (tested on Debian GNU/Linux 6.0.6)
-Python (tested on v2.7.4)
-BLAST (tested on BLAST+ v2.3.0)
-Entrez Direct (tested on v4.70)
-Gblocks (tested on v0.91b)
-MAFFT (tested on v7.221)
-RAxML (tested on v7.5.4)
-Samtools (tested on v0.1.19)
+	Linux system (tested on Debian GNU/Linux 6.0.6)
+	Python (tested on v2.7.4)
+	BLAST (tested on BLAST+ v2.3.0)
+	Entrez Direct (tested on v4.70)
+	Gblocks (tested on v0.91b)
+	MAFFT (tested on v7.221)
+	RAxML (tested on v7.5.4)
+	Samtools (tested on v0.1.19)
 
 
 ***** INSTALLATION *****
 
-1. git clone git@github.com:abmudd/Phylogeny.git
-2. cd Phylogeny
-3. make
+	1. git clone git@github.com:abmudd/Phylogeny.git
+	2. cd Phylogeny
+	3. make
 
 
 ***** SYNOPSIS *****
 
-1. cd workdir
-2. Phylogeny/bin/prep.sh -txid 0000
-3. Phylogeny/bin/makephylogenysh.py gene 0000
-4. cd gene
-5. examine NCBI_query.gb.gene.names and edit gene.key to include synonymous names on new lines
-6. ./gene.part2.sh
-7. examine NCBI_query.gb.gene.names and confirm synonymous names are removed
-8. ./gene.part3.sh
-9. examine blast.incorrect for any potential incorrect sequences and delete the fa files from extract subdirectory using log.extractgb to determine numbering
-10. ./gene.part4.sh
-11. repeat steps 3-10 for each desired gene
-12. cd workdir/mafft
-13. ./analysis.sh
+	1. cd workdir
+	2. Phylogeny/bin/prep.sh -txid 0000
+	3. Phylogeny/bin/makephylogenysh.py gene 0000
+	4. cd gene
+	5. examine NCBI_query.gb.gene.names and edit gene.key to include synonymous names on new lines
+	6. sh gene.part2.sh
+	7. examine NCBI_query.gb.gene.names and confirm synonymous names are removed
+	8. sh gene.part3.sh
+	9. examine blast.incorrect for any potential incorrect sequences and delete the fa files from extract subdirectory using log.extractgb to determine numbering
+	10. sh gene.part4.sh
+	11. repeat steps 3-10 for each desired gene
+	12. cd workdir/mafft
+	13. sh analysis.sh
 
 
 ***** prep.sh v0.1 *****
