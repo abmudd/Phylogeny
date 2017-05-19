@@ -55,8 +55,7 @@ function usage () {
     printf "\n" >&2;
     printf "%s v%s \n" `basename $0` $VERSION >&2;
     printf "\n" >&2;
-    printf "Usage: %s [--workdir STR] [--scripts-dir STR] [--txid INT] [--edirect-dir STR]\n" `basename $0` >&2;
-    printf "       [--help] [-h]\n" >&2;
+    printf "Usage: %s [-efetch STR] [-esearch STR] [-workdir STR] [-txid INT] [-help] [-h] \n" `basename $0` >&2;
     printf "\n" >&2;
     printf "Prep script to download GenBanks records for taxonomic classification of phylogeny.\n" >&2;
     printf "\n" >&2;
