@@ -52,12 +52,16 @@ args = parser.parse_args()
 
 
 # Error function
+# ============================================================
+
 def error(output, number):
     sys.stderr.write('['+os.path.basename(sys.argv[0])+']: '+output+'\n')
     sys.exit(number)
 
 
-# Check directories function
+# Function to check directories
+# ============================================================
+
 def check_dir(directory):
     try:
         os.path.isdir(directory)
@@ -65,7 +69,9 @@ def check_dir(directory):
         error(directory+' not found', 1)
 
 
-# Check executable function
+# Function to check executables
+# ============================================================
+
 if sys.version_info[:2] < (3,3):
     def which(pgm):
         path=os.getenv('PATH')
@@ -85,7 +91,9 @@ def check_exe(function):
         error(function+' not found in specified location or not executable', 127)
 
 
-# Define variables
+# Set variables
+# ============================================================
+
 scriptsdir = os.path.dirname(sys.argv[0])
 efetch = os.path.dirname('esearch')+'efetch'
 makeblastdb = os.path.dirname('tblastx')+'makeblastdb'
@@ -93,13 +101,18 @@ prepdir = args.workdir+'/prep/'
 genedir = args.workdir+'/'+args.genename+'/'
 mafftdir = args.workdir+'/mafft/'
 
+
 # Check that directories exist
+# ============================================================
+
 check_dir(prepdir)
 check_dir(scriptsdir)
 check_dir(args.workdir)
 
 
-# Check that external tools are accessible
+# Check that external tools are executable
+# ============================================================
+
 esearch = check_exe_return(args.esearch)
 efetch = check_exe_return(efetch)
 gblocks = check_exe_return(args.gblocks)
@@ -117,10 +130,14 @@ samtools = check_exe_return(args.samtools)
 
 
 # Make gene directory
+# ============================================================
+
 subprocess.call(['mkdir', '-p', genedir])
 
 
-# Open output files
+# Set output names
+# ============================================================
+
 out_1_sh = open(genedir+args.genename+'.part1.sh', 'w')
 out_2_sh = open(genedir+args.genename+'.part2.sh', 'w')
 out_3_sh = open(genedir+args.genename+'.part3.sh', 'w')
@@ -128,7 +145,13 @@ out_4_sh = open(genedir+args.genename+'.part4.sh', 'w')
 out_key = open(genedir+args.genename+'.key', 'w')
 
 
+###############################################################################
+# Run
+###############################################################################
+
 # Write output 1: download GenBank records; check key file
+# ============================================================
+
 out_1_sh.write('#!/bin/bash\n\n'
                +'# Download '+args.genename+' GenBank records for taxID '+args.txid+' from NCBI\n'
                +esearch+' -db nucleotide -query \'txid'+args.txid+'[Organism] biomol_genomic[PROP] '
@@ -138,14 +161,20 @@ out_1_sh.write('#!/bin/bash\n\n'
                +'cut -f2 '+genedir+'NCBI_query.gb.gene.names | sort | uniq >'+genedir
                +'NCBI_query.gb.uniq.names\n')
 
+
 # Write output 2: recheck key file
+# ============================================================
+
 out_2_sh.write('#!/bin/bash\n\n'
                +'# Recheck list of genes not in key file\n'
                +scriptsdir+'/genenamesfromgb.py '+genedir+args.genename+'.key '+genedir+'NCBI_query.gb\n'
                +'cut -f2 '+genedir+'NCBI_query.gb.gene.names | sort | uniq >'+genedir
                +'NCBI_query.gb.uniq.names\n')
 
+
 # Write output 3: extract GenBank records and confirm with BLAST
+# ============================================================
+
 out_3_sh.write('#!/bin/bash\n\n'
                +'# Extract gene annotations from GenBank records\n'
                +'mkdir -p '+genedir+'extract/\n'
@@ -168,13 +197,19 @@ out_3_sh.write('#!/bin/bash\n\n'
                +genedir+'blast.incorrect; done\n'
                +'rm '+genedir+'temp\n')
 
+
 # Write output 4: make alignment
+# ============================================================
+
 out_4_sh.write('#!/bin/bash\n\n'
                +'# Run mafft on merged gene file\n'
                +mafft+' --maxiterate 1000000 --genafpair --thread '+args.threads+' '+genedir+'extract/'
                +args.genename+'.cat.fa >'+mafftdir+args.genename+'.cat.mafft.fa 2>'+genedir+'log.mafft\n')
 
-# Make mafft directory and write analysis files
+
+# Make mafft directory and write analysis script
+# ============================================================
+
 if not os.path.isdir(mafftdir):
     subprocess.call(['mkdir', '-p', mafftdir])
     out_5_sh = open(mafftdir+'/analysis.sh', 'w')
@@ -200,17 +235,26 @@ if not os.path.isdir(mafftdir):
     out_5_sh.close()
     subprocess.call(['chmod', 'u+x', mafftdir+'/analysis.sh'])
 
+
 # Write output key file
+# ============================================================
+
 out_key.write('GB_name\n'+args.genename+'\n')
 
+
 # Close output files
+# ============================================================
+
 out_1_sh.close()
 out_2_sh.close()
 out_3_sh.close()
 out_4_sh.close()
 out_key.close()
 
-# Chmod u+x for sh files
+
+# Make output scripts executable and run part 1
+# ============================================================
+
 subprocess.call(['chmod', 'u+x', genedir+args.genename+'.part1.sh'])
 subprocess.call(['chmod', 'u+x', genedir+args.genename+'.part2.sh'])
 subprocess.call(['chmod', 'u+x', genedir+args.genename+'.part3.sh'])
