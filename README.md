@@ -55,12 +55,12 @@ Usage: prep.sh [--workdir STR] [--scripts-dir STR] [--txid INT] [--edirect-dir S
 Prep script to download GenBanks records for taxonomic classification of phylogeny.
 
 Required arguments:
-       -txid INT           taxonomy ID from NCBI for classification
+	-txid INT           taxonomy ID from NCBI for classification
 
 Optional arguments:
-       -efetch STR         path for efetch if not in PATH [efetch]
-       -esearch STR        path for esearch if not in PATH [esearch]
-       -workdir STR        path for working directory [pwd]
+	-efetch STR         path for efetch if not in PATH [efetch]
+	-esearch STR        path for esearch if not in PATH [esearch]
+	-workdir STR        path for working directory [pwd]
 
 
 ***** makephylogenysh.py v0.1 *****
@@ -74,25 +74,19 @@ record, tblastx confirmation, MAFFT alignment, gBlocks filtering, and RAxML
 tree creation and bootstrap.
 
 optional arguments:
-  -h, --help            show this help message and exit
-  -e STR, --esearch STR
-                        path for esearch [esearch]
-  -g STR, --gblocks STR
-                        path for Gblocks [Gblocks]
-  -m STR, --mafft STR   path for MAFFT [mafft]
-  -r STR, --raxml STR   path for RAxML [raxmlHPC-HYBRID-SSE3]
-  -s STR, --samtools STR
-                        path for samtools [samtools]
-  -t STR, --tblastx STR
-                        path for tblastx [tblastx]
-  -u INT, --threads INT
-                        threads for MAFFT and RAxML [10]
-  -v, --version         show version info and exit
-  -w STR, --workdir STR
-                        path for working directory [pwd]
+	-h, --help            	show this help message and exit
+	-e STR, --esearch STR	path for esearch [esearch]
+	-g STR, --gblocks STR	path for Gblocks [Gblocks]
+	-m STR, --mafft STR   	path for MAFFT [mafft]
+	-r STR, --raxml STR   	path for RAxML [raxmlHPC-HYBRID-SSE3]
+	-s STR, --samtools STR	path for samtools [samtools]
+	-t STR, --tblastx STR	path for tblastx [tblastx]
+	-u INT, --threads INT	threads for MAFFT and RAxML [10]
+	-v, --version         	show version info and exit
+	-w STR, --workdir STR	path for working directory [pwd]
 
 required arguments:
-  genename              gene name
-  txid                  taxonomy ID from NCBI for classification
+	genename              	gene name
+	txid                  	taxonomy ID from NCBI for classification
 
 It is highly recommended that absolute paths be passed via the path flags.
