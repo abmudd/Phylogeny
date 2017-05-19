@@ -202,6 +202,9 @@ out_3_sh.write('#!/bin/bash\n\n'
 # ============================================================
 
 out_4_sh.write('#!/bin/bash\n\n'
+               +'# Re-merge sequences for all species\n'
+               +'cat '+genedir+'extract/sequence*.'+args.genename+'.fa > '+genedir+'extract/'+args.genename
+               +'.cat.fa\n\n'
                +'# Run mafft on merged gene file\n'
                +mafft+' --maxiterate 1000000 --genafpair --thread '+args.threads+' '+genedir+'extract/'
                +args.genename+'.cat.fa >'+mafftdir+args.genename+'.cat.mafft.fa 2>'+genedir+'log.mafft\n')
