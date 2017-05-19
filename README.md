@@ -49,8 +49,8 @@ Samtools (tested on v0.1.19)
 
 ***** prep.sh v0.1 *****
 
-Usage: prep.sh [--workdir STR] [--scripts-dir STR] [--txid INT] [--edirect-dir STR]
-       [--help] [-h]
+Usage: prep.sh [-efetch STR] [-esearch STR] [-workdir STR] [-txid INT]
+       [-help] [-h]
 
 Prep script to download GenBanks records for taxonomic classification of phylogeny.
 
