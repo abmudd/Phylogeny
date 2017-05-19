@@ -231,7 +231,8 @@ if not os.path.isdir(mafftdir):
                    +scriptsdir+'/AfterPhylo.pl -format=newick -replace -annotate='+mafftdir+'replace.dict '
                    +mafftdir+'RAxML_bipartitions.RAxML >'+mafftdir+'log.AfterPhylo\n'
                    +scriptsdir+'/AfterPhylo.pl -format=newick -average '+mafftdir+'RAxML_bipartitions.RAxML '
-                   +'>>'+mafftdir+'log.AfterPhylo\n')
+                   +'>>'+mafftdir+'log.AfterPhylo\n'
+                   +'ln -s '+mafftdir+'RAxML_bipartitions.out.RAxML '+args.workdir+'/final.tree\n')
     out_5_sh.close()
     subprocess.call(['chmod', 'u+x', mafftdir+'/analysis.sh'])
 
