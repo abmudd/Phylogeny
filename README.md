@@ -55,9 +55,11 @@ Usage: prep.sh [--workdir STR] [--scripts-dir STR] [--txid INT] [--edirect-dir S
 Prep script to download GenBanks records for taxonomic classification of phylogeny.
 
 Required arguments:
+
 	-txid INT           taxonomy ID from NCBI for classification
 
 Optional arguments:
+
 	-efetch STR         path for efetch if not in PATH [efetch]
 	-esearch STR        path for esearch if not in PATH [esearch]
 	-workdir STR        path for working directory [pwd]
@@ -74,6 +76,7 @@ record, tblastx confirmation, MAFFT alignment, gBlocks filtering, and RAxML
 tree creation and bootstrap.
 
 optional arguments:
+
 	-h, --help            	show this help message and exit
 	-e STR, --esearch STR	path for esearch [esearch]
 	-g STR, --gblocks STR	path for Gblocks [Gblocks]
@@ -86,6 +89,7 @@ optional arguments:
 	-w STR, --workdir STR	path for working directory [pwd]
 
 required arguments:
+
 	genename              	gene name
 	txid                  	taxonomy ID from NCBI for classification
 
