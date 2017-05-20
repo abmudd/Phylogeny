@@ -37,7 +37,7 @@ Once prerequisites are installed and in the PATH environment, run the following 
 ```
 mkdir workdir && cd workdir
 ~/Phylogeny/bin/prep.sh -txid 8383
-~/Phylogeny/bin/makephylogenysh.py ATP6 8383 && cd ATP6 && cp ~/Phylogeny/example/ATP6.key . && sh ATP6.part2.sh && sh ATP6.part3.sh && sh ATP6.part4.sh && cd ..
-~/Phylogeny/bin/makephylogenysh.py ATP8 8383 && cd ATP8 && cp ~/Phylogeny/example/ATP8.key . && sh ATP8.part2.sh && sh ATP8.part3.sh && sh ATP8.part4.sh && cd ..
+~/Phylogeny/bin/makephylogenysh.py ATP6 8383 && cd ATP6 && cp ~/Phylogeny/publication/ATP6.key . && sh ATP6.part2.sh && sh ATP6.part3.sh && sh ATP6.part4.sh && cd ..
+~/Phylogeny/bin/makephylogenysh.py ATP8 8383 && cd ATP8 && cp ~/Phylogeny/publication/ATP8.key . && sh ATP8.part2.sh && sh ATP8.part3.sh && sh ATP8.part4.sh && cd ..
 cd mafft && sh analysis.sh && cd ..
 ```
