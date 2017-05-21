@@ -17,7 +17,6 @@ Entrez Direct (tested on v4.70)
 Gblocks (tested on v0.91b)
 MAFFT (tested on v7.221)
 RAxML (tested on v7.5.4)
-Samtools (tested on v0.1.19)
 ```
 
 ## Installing

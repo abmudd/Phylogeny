@@ -40,9 +40,8 @@ parser.add_argument("-e", "--esearch", metavar='STR', help="path for esearch [es
 parser.add_argument("-g", "--gblocks", metavar='STR', help="path for Gblocks [Gblocks]", type=str, default='Gblocks')
 parser.add_argument("-m", "--mafft", metavar='STR', help="path for MAFFT [mafft]", type=str, default='mafft')
 parser.add_argument("-r", "--raxml", metavar='STR', help="path for RAxML [raxmlHPC-HYBRID-SSE3]", type=str, default='raxmlHPC-HYBRID-SSE3')
-parser.add_argument("-s", "--samtools", metavar='STR', help="path for samtools [samtools]", type=str, default='samtools')
 parser.add_argument("-t", "--tblastx", metavar='STR', help="path for tblastx [tblastx]", type=str, default='tblastx')
-parser.add_argument("-u", "--threads", metavar='INT', help="threads for MAFFT and RAxML [10]", type=str, default='10')
+parser.add_argument("-u", "--threads", metavar='INT', help="threads for tblastx, MAFFT, and RAxML [10]", type=str, default='10')
 parser.add_argument("-v", "--version", help="show version info and exit", action='version', version='%(prog)s 0.1')
 parser.add_argument("-w", "--workdir", metavar='STR', help="path for working directory [pwd]", type=str, default=os.getcwd())
 required = parser.add_argument_group('required arguments')
@@ -126,7 +125,6 @@ check_exe(scriptsdir+'/extractgb.py')
 check_exe(scriptsdir+'/phyfilter.py')
 makeblastdb = check_exe_return(makeblastdb)
 tblastx = check_exe_return(args.tblastx)
-samtools = check_exe_return(args.samtools)
 
 
 # Make gene directory
@@ -187,12 +185,11 @@ out_3_sh.write('#!/bin/bash\n\n'
                +makeblastdb+' -dbtype nucl -in '+genedir+'extract/'+args.genename+'.cat.fa &>'+genedir
                +'blast.log\n'
                +tblastx+' -query extract/'+args.genename+'.cat.fa -db extract/'+args.genename+'.cat.fa '
-               +'-evalue '+'0.00001 -outfmt 6 -max_target_seqs 30 1>'+genedir+'blast.out 2>>'+genedir
-               +'blast.log\n'
-               +samtools+' faidx '+genedir+'extract/'+args.genename+'.cat.fa\n'
+               +'-evalue '+'0.00001 -outfmt 6 -max_target_seqs 30 -num_threads '+args.threads+' 1>'+genedir
+               +'blast.out 2>>'+genedir+'blast.log\n'
                +'cat /dev/null >'+genedir+'blast.incorrect \n'
                +'awk \'{if($1 != $2) {print $1}}\' '+genedir+'blast.out | sort | uniq >'+genedir+'temp\n'
-               +'cut -f1 '+genedir+'extract/'+args.genename+'.cat.fa.fai >>'+genedir+'temp\n'
+               +'grep \'^>\' '+genedir+'extract/'+args.genename+'.cat.fa | cut -c2- >>'+genedir+'temp\n'
                +'sort '+genedir+'temp | uniq -u | while read z; do grep ${z} '+genedir+'/log.extractgb >>'
                +genedir+'blast.incorrect; done\n'
                +'rm '+genedir+'temp\n')
