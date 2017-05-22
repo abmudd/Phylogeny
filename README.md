@@ -16,7 +16,7 @@ BLAST (tested on BLAST+ v2.3.0)
 Entrez Direct (tested on v4.70)
 Gblocks (tested on v0.91b)
 MAFFT (tested on v7.221)
-RAxML (tested on v7.5.4)
+RAxML (tested on v7.5.4 and v8.2.2)
 ```
 
 ## Installing
