@@ -198,7 +198,7 @@ out_3_sh.write('#!/bin/bash\n\n'
                +tblastx+' -query '+extractdir+args.genename+'.cat.fa -db '+extractdir+args.genename+'.cat.fa'
                +' -evalue '+'0.00001 -outfmt 6 -max_target_seqs 30 -num_threads '+args.threads+' 1>'+genedir
                +'blast.out 2>>'+genedir+'blast.log\n'
-               +'echo >'+genedir+'blast.incorrect \n'
+               +'printf \'\' >'+genedir+'blast.incorrect \n'
                +'awk \'{if($1 != $2) {print $1}}\' '+genedir+'blast.out | sort | uniq >'+genedir+'temp\n'
                +'grep \'^>\' '+extractdir+args.genename+'.cat.fa | cut -c2- >>'+genedir+'temp\n'
                +'sort '+genedir+'temp | uniq -u | while read z; do grep ${z} '+genedir+'log.extractgb >>'
