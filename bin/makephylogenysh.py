@@ -72,19 +72,29 @@ def check_dir(directory):
 # ============================================================
 
 if sys.version_info[:2] < (3,3):
-    def which(pgm):
-        path=os.getenv('PATH')
-        for p in path.split(os.path.pathsep):
-            p=os.path.join(p,pgm)
-            if os.path.exists(p) and os.access(p,os.X_OK):
-                return p
+    def which(program):
+        import os
+        def is_exe(fpath):
+            return os.path.exists(fpath) and os.access(fpath, os.X_OK)
+        fpath, fname = os.path.split(program)
+        if fpath:
+            if is_exe(program):
+                return program
+        else:
+            for path in os.environ["PATH"].split(os.pathsep):
+                exe_file = os.path.join(path, program)
+                if is_exe(exe_file):
+                    return exe_file
+        return None
 else:
     from shutil import which
+
 def check_exe_return(function):
     if not which(function) or not os.access(which(function), os.X_OK):
         error(function+' not found in specified location or not executable', 127)
     else:
         return which(function)
+
 def check_exe(function):
     if not which(function) or not os.access(which(function), os.X_OK):
         error(function+' not found in specified location or not executable', 127)
