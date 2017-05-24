@@ -77,7 +77,7 @@ def which(program):
     fpath, fname = os.path.split(program)
     if fpath:
         if is_exe(program):
-            return program
+            return os.path.abspath(program)
     else:
         for path in os.environ["PATH"].split(os.pathsep):
             exe_file = os.path.join(path, program)
@@ -99,7 +99,7 @@ def check_exe(function):
 # Set variables
 # ============================================================
 
-scriptsdir = os.path.dirname(sys.argv[0])
+scriptsdir = os.path.abspath(os.path.dirname(sys.argv[0]))
 efetch = os.path.dirname('esearch')+'efetch'
 makeblastdb = os.path.dirname('tblastx')+'makeblastdb'
 prepdir = args.workdir+'/prep/'
