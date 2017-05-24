@@ -29,6 +29,7 @@
 # Set hard and optional variables
 # ============================================================
 
+set -e
 VERSION='0.1';
 COMMAND="$0 $*";
 DATE=`date +%F`;

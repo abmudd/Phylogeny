@@ -99,20 +99,28 @@ def check_exe(function):
 # Set variables
 # ============================================================
 
-scriptsdir = os.path.abspath(os.path.dirname(sys.argv[0]))
+scriptsdir = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])),'')
 efetch = os.path.dirname('esearch')+'efetch'
 makeblastdb = os.path.dirname('tblastx')+'makeblastdb'
-prepdir = args.workdir+'/prep/'
-genedir = args.workdir+'/'+args.genename+'/'
-mafftdir = args.workdir+'/mafft/'
+workdir = os.path.join(os.path.abspath(args.workdir),'')
+prepdir = os.path.join(workdir,'prep','')
+genedir = os.path.join(workdir,args.genename,'')
+mafftdir = os.path.join(workdir,'mafft','')
+
+
+# Make directories
+# ============================================================
+
+subprocess.check_call(['mkdir', '-p', genedir])
 
 
 # Check that directories exist
 # ============================================================
 
+check_dir(genedir)
 check_dir(prepdir)
 check_dir(scriptsdir)
-check_dir(args.workdir)
+check_dir(workdir)
 
 
 # Check that external tools are executable
@@ -123,20 +131,14 @@ efetch = check_exe_return(efetch)
 gblocks = check_exe_return(args.gblocks)
 mafft = check_exe_return(args.mafft)
 raxml = check_exe_return(args.raxml)
-check_exe(scriptsdir+'/allgenesingb.py')
-check_exe(scriptsdir+'/AfterPhylo.pl')
-check_exe(scriptsdir+'/BeforePhylo.pl')
-check_exe(scriptsdir+'/genenamesfromgb.py')
-check_exe(scriptsdir+'/extractgb.py')
-check_exe(scriptsdir+'/phyfilter.py')
+check_exe(scriptsdir+'allgenesingb.py')
+check_exe(scriptsdir+'AfterPhylo.pl')
+check_exe(scriptsdir+'BeforePhylo.pl')
+check_exe(scriptsdir+'genenamesfromgb.py')
+check_exe(scriptsdir+'extractgb.py')
+check_exe(scriptsdir+'phyfilter.py')
 makeblastdb = check_exe_return(makeblastdb)
 tblastx = check_exe_return(args.tblastx)
-
-
-# Make gene directory
-# ============================================================
-
-subprocess.call(['mkdir', '-p', genedir])
 
 
 # Set output names
@@ -157,11 +159,12 @@ out_key = open(genedir+args.genename+'.key', 'w')
 # ============================================================
 
 out_1_sh.write('#!/bin/bash\n\n'
+               +'set -e\n\n'
                +'# Download '+args.genename+' GenBank records for taxID '+args.txid+' from NCBI\n'
                +esearch+' -db nucleotide -query \'txid'+args.txid+'[Organism] biomol_genomic[PROP] '
                +args.genename+'[All Fields]\' | '+efetch+' -format gb > '+genedir+'NCBI_query.gb\n\n'
                +'# Create list of genes not in key file\n'
-               +scriptsdir+'/genenamesfromgb.py '+genedir+args.genename+'.key '+genedir+'NCBI_query.gb\n'
+               +scriptsdir+'genenamesfromgb.py '+genedir+args.genename+'.key '+genedir+'NCBI_query.gb\n'
                +'cut -f2 '+genedir+'NCBI_query.gb.gene.names | sort | uniq >'+genedir
                +'NCBI_query.gb.uniq.names\n')
 
@@ -170,8 +173,9 @@ out_1_sh.write('#!/bin/bash\n\n'
 # ============================================================
 
 out_2_sh.write('#!/bin/bash\n\n'
+               +'set -e\n\n'
                +'# Recheck list of genes not in key file\n'
-               +scriptsdir+'/genenamesfromgb.py '+genedir+args.genename+'.key '+genedir+'NCBI_query.gb\n'
+               +scriptsdir+'genenamesfromgb.py '+genedir+args.genename+'.key '+genedir+'NCBI_query.gb\n'
                +'cut -f2 '+genedir+'NCBI_query.gb.gene.names | sort | uniq >'+genedir
                +'NCBI_query.gb.uniq.names\n')
 
@@ -179,24 +183,25 @@ out_2_sh.write('#!/bin/bash\n\n'
 # Write output 3: extract GenBank records and confirm with BLAST
 # ============================================================
 
+extractdir = os.path.join(genedir,'extract','')
+
 out_3_sh.write('#!/bin/bash\n\n'
+               +'set -e\n\n'
                +'# Extract gene annotations from GenBank records\n'
-               +'mkdir -p '+genedir+'extract/\n'
-               +scriptsdir+'/extractgb.py --silent --log '+genedir+'log.extractgb --output '+genedir
-               +'extract/sequence '+genedir+args.genename+'.key '+prepdir+'/NCBI_full.gb\n\n'
+               +'mkdir -p '+extractdir+'\n'
+               +scriptsdir+'extractgb.py --silent --log '+genedir+'log.extractgb --output '+extractdir
+               +'sequence '+genedir+args.genename+'.key '+prepdir+'NCBI_full.gb\n\n'
                +'# Merge sequences for all species\n'
-               +'cat '+genedir+'extract/sequence*.'+args.genename+'.fa > '+genedir+'extract/'+args.genename
-               +'.cat.fa\n\n'
+               +'cat '+extractdir+'sequence*.'+args.genename+'.fa > '+extractdir+args.genename+'.cat.fa\n\n'
                +'# Identify possible incorrect sequences with blast\n'
-               +makeblastdb+' -dbtype nucl -in '+genedir+'extract/'+args.genename+'.cat.fa &>'+genedir
-               +'blast.log\n'
-               +tblastx+' -query extract/'+args.genename+'.cat.fa -db extract/'+args.genename+'.cat.fa '
-               +'-evalue '+'0.00001 -outfmt 6 -max_target_seqs 30 -num_threads '+args.threads+' 1>'+genedir
+               +makeblastdb+' -dbtype nucl -in '+extractdir+args.genename+'.cat.fa &>'+genedir+'blast.log\n'
+               +tblastx+' -query '+extractdir+args.genename+'.cat.fa -db '+extractdir+args.genename+'.cat.fa'
+               +' -evalue '+'0.00001 -outfmt 6 -max_target_seqs 30 -num_threads '+args.threads+' 1>'+genedir
                +'blast.out 2>>'+genedir+'blast.log\n'
-               +'cat /dev/null >'+genedir+'blast.incorrect \n'
+               +'echo >'+genedir+'blast.incorrect \n'
                +'awk \'{if($1 != $2) {print $1}}\' '+genedir+'blast.out | sort | uniq >'+genedir+'temp\n'
-               +'grep \'^>\' '+genedir+'extract/'+args.genename+'.cat.fa | cut -c2- >>'+genedir+'temp\n'
-               +'sort '+genedir+'temp | uniq -u | while read z; do grep ${z} '+genedir+'/log.extractgb >>'
+               +'grep \'^>\' '+extractdir+args.genename+'.cat.fa | cut -c2- >>'+genedir+'temp\n'
+               +'sort '+genedir+'temp | uniq -u | while read z; do grep ${z} '+genedir+'log.extractgb >>'
                +genedir+'blast.incorrect; done\n'
                +'rm '+genedir+'temp\n')
 
@@ -205,42 +210,45 @@ out_3_sh.write('#!/bin/bash\n\n'
 # ============================================================
 
 out_4_sh.write('#!/bin/bash\n\n'
+               +'set -e\n\n'
                +'# Re-merge sequences for all species\n'
-               +'cat '+genedir+'extract/sequence*.'+args.genename+'.fa > '+genedir+'extract/'+args.genename
-               +'.cat.fa\n\n'
+               +'cat '+extractdir+'sequence*.'+args.genename+'.fa > '+extractdir+args.genename+'.cat.fa\n\n'
                +'# Run mafft on merged gene file\n'
-               +mafft+' --maxiterate 1000000 --genafpair --thread '+args.threads+' '+genedir+'extract/'
-               +args.genename+'.cat.fa >'+mafftdir+args.genename+'.cat.mafft.fa 2>'+genedir+'log.mafft\n')
+               +mafft+' --maxiterate 1000000 --genafpair --thread '+args.threads+' '+extractdir+args.genename
+               +'.cat.fa >'+mafftdir+args.genename+'.cat.mafft.fa 2>'+genedir+'log.mafft\n')
 
 
 # Make mafft directory and write analysis script
 # ============================================================
 
 if not os.path.isdir(mafftdir):
-    subprocess.call(['mkdir', '-p', mafftdir])
-    out_5_sh = open(mafftdir+'/analysis.sh', 'w')
+    subprocess.check_call(['mkdir', mafftdir])
+    check_dir(mafftdir)
+    out_5_sh = open(mafftdir+'analysis.sh', 'w')
     out_5_sh.write('#!/bin/bash\n\n'
+                   +'set -e\n\n'
                    +'# Concatenate mafft alignments, run Gblocks, and change names\n'
-                   +'cat '+args.workdir+'/*/log.extractgb | grep -v \'Extracting a total of\' | cut -f2 | '
-                   +'sort | uniq | awk \'{print $0 "\\t" "taxon" NR}\' >'+mafftdir+'translate.dict\n'
-                   +scriptsdir+'/BeforePhylo.pl -type=dna -conc=raxml -sort -Gblocks='+gblocks
+                   +'cat '+os.path.join(workdir,'*','')+'log.extractgb | grep -v \'Extracting a total of\' |'
+                   +' cut -f2 | sort | uniq | awk \'{print $0 "\\t" "taxon" NR}\' >'+mafftdir
+                   +'translate.dict\n'
+                   +scriptsdir+'BeforePhylo.pl -type=dna -conc=raxml -sort -Gblocks='+gblocks
                    +' -trim -translate='+mafftdir+'translate.dict -output=phylip '+mafftdir+'*.fa >'
                    +mafftdir+'log.BeforePhylo\n\n'
                    +'# Remove individuals without any data and duplicate individuals\n'
-                   +scriptsdir+'/phyfilter.py -l '+mafftdir+'output.filter.log -o '+mafftdir
+                   +scriptsdir+'phyfilter.py -l '+mafftdir+'output.filter.log -o '+mafftdir
                    +'output.filter.phy '+mafftdir+'output.phy\n\n'
                    +'# Run RAxML\n'
                    +raxml+' -f a -T '+args.threads+' -m GTRGAMMA -n RAxML -# autoMRE_IGN -x $RANDOM -p '
                    +'$RANDOM -q '+mafftdir+'output_partitions.txt -s '+mafftdir+'output.filter.phy\n\n'
                    +'# Revert names and analyze tree\n'
                    +'awk \'{print $2 "\\t" $1}\' '+mafftdir+'translate.dict >'+mafftdir+'replace.dict\n'
-                   +scriptsdir+'/AfterPhylo.pl -format=newick -replace -annotate='+mafftdir+'replace.dict '
+                   +scriptsdir+'AfterPhylo.pl -format=newick -replace -annotate='+mafftdir+'replace.dict '
                    +mafftdir+'RAxML_bipartitions.RAxML >'+mafftdir+'log.AfterPhylo\n'
-                   +scriptsdir+'/AfterPhylo.pl -format=newick -average '+mafftdir+'RAxML_bipartitions.RAxML '
+                   +scriptsdir+'AfterPhylo.pl -format=newick -average '+mafftdir+'RAxML_bipartitions.RAxML '
                    +'>>'+mafftdir+'log.AfterPhylo\n'
-                   +'ln -s '+mafftdir+'RAxML_bipartitions.out.RAxML '+args.workdir+'/final.tree\n')
+                   +'ln -s '+mafftdir+'RAxML_bipartitions.out.RAxML '+workdir+'final.tree\n')
     out_5_sh.close()
-    subprocess.call(['chmod', 'u+x', mafftdir+'/analysis.sh'])
+    subprocess.check_call(['chmod', 'u+x', mafftdir+'analysis.sh'])
 
 
 # Write output key file
@@ -262,8 +270,8 @@ out_key.close()
 # Make output scripts executable and run part 1
 # ============================================================
 
-subprocess.call(['chmod', 'u+x', genedir+args.genename+'.part1.sh'])
-subprocess.call(['chmod', 'u+x', genedir+args.genename+'.part2.sh'])
-subprocess.call(['chmod', 'u+x', genedir+args.genename+'.part3.sh'])
-subprocess.call(['chmod', 'u+x', genedir+args.genename+'.part4.sh'])
-subprocess.call([genedir+args.genename+'.part1.sh'])
+subprocess.check_call(['chmod', 'u+x', genedir+args.genename+'.part1.sh'])
+subprocess.check_call(['chmod', 'u+x', genedir+args.genename+'.part2.sh'])
+subprocess.check_call(['chmod', 'u+x', genedir+args.genename+'.part3.sh'])
+subprocess.check_call(['chmod', 'u+x', genedir+args.genename+'.part4.sh'])
+subprocess.check_call([genedir+args.genename+'.part1.sh'])
