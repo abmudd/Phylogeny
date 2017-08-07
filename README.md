@@ -19,6 +19,12 @@ MAFFT (tested on v7.221)
 RAxML (tested on v7.5.4 and v8.2.2)
 ```
 
+Required Python packages:
+
+```
+argparse, Bio, collections, os, subprocess, sys
+```
+
 ## Installing
 
 Run the following to install this pipeline:
