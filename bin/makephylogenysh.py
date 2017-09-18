@@ -100,8 +100,6 @@ def check_exe(function):
 # ============================================================
 
 scriptsdir = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])),'')
-efetch = os.path.dirname('esearch')+'efetch'
-makeblastdb = os.path.dirname('tblastx')+'makeblastdb'
 workdir = os.path.join(os.path.abspath(args.workdir),'')
 prepdir = os.path.join(workdir,'prep','')
 genedir = os.path.join(workdir,args.genename,'')
@@ -127,7 +125,7 @@ check_dir(workdir)
 # ============================================================
 
 esearch = check_exe_return(args.esearch)
-efetch = check_exe_return(efetch)
+efetch = check_exe_return(os.path.dirname('esearch')+'efetch')
 gblocks = check_exe_return(args.gblocks)
 mafft = check_exe_return(args.mafft)
 raxml = check_exe_return(args.raxml)
@@ -137,8 +135,8 @@ check_exe(scriptsdir+'BeforePhylo.pl')
 check_exe(scriptsdir+'genenamesfromgb.py')
 check_exe(scriptsdir+'extractgb.py')
 check_exe(scriptsdir+'phyfilter.py')
-makeblastdb = check_exe_return(makeblastdb)
 tblastx = check_exe_return(args.tblastx)
+makeblastdb = check_exe_return(os.path.dirname('tblastx')+'makeblastdb')
 
 
 # Set output names
