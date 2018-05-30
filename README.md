@@ -35,6 +35,16 @@ cd Phylogeny
 make
 ```
 
+## Method
+
+The pipeline uses the following approach:
+
+1. The user provides a taxonomy ID from NCBI. The pipeline [```prep.sh```] downloads and analyzes all GenBank sequences for that clade, returning the total number of unique species with available data and a list of all identified gene names with the percent of species containing that name.
+2.	From this list, the user selects an initial gene name that is represented by a large fraction of species. The pipeline [```part1.sh```] queries the gene name, downloads all GenBank results, and analyzes the dataset to determine potential synonymous names. This step can be easily repeated if multiple synonymous names are known for a particular gene.
+3.	The user selects the correct synonymous names from the provided list and outputs them into a synonym key file. The analysis of GenBank results can be rerun to confirm that synonymous names are correctly written in the key [```part2.sh```]. Once confirmed, the pipeline [```part3.sh```] extracts sequences matching the synonymous names and uses BLAST+ to flag potentially incorrect sequences.
+4.	The user validates any incorrect sequences, and the pipeline [```part4.sh```] aligns sequences with MAFFT.
+5.	The user inspects and curates the alignment and then repeats steps 2-4 for all desired genes. After all genes are aligned, the pipeline [```mafft/analysis.sh```] concatenates the alignments, filters with Gblocks, and generates a phylogenetic tree with RAxML.
+
 ## Test Data
 
 Once prerequisites are installed and in the PATH environment, run the following to test this pipeline using the mitochondrial genes ATP6 and ATP8 with the frog genus Bufo:
