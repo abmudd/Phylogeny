@@ -1,6 +1,6 @@
 # Phylogeny Pipeline
 
-The phylogeny pipeline allows the user to rapidly mine GenBank for a particular taxa, curate and align the resulting hits, and produce a high-density phylogenetic tree. The steps are outlined in more detail in the prepared manuscript.
+The phylogeny pipeline allows the user to rapidly mine GenBank for a particular taxa, curate and align the resulting hits, and produce a high-density phylogenetic tree.
 
 Version 0.1
 
