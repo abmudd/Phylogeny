@@ -4,6 +4,7 @@ The phylogeny pipeline allows the user to rapidly mine GenBank for a particular 
 
 Version 0.1
 
+Publication status: unpublished
 
 ## Prerequisites
 
